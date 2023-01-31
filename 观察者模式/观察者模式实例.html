@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>观察者模式实例</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      .main {
+        display: flex;
+        height: 100vh;
+        width: 100vw;
+      }
+      .nav {
+        width: 300px;
+        background-color: aquamarine;
+        height: 100%;
+      }
+      .content {
+        width: calc(100vw - 300px);
+        background-color: bisque;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="main">
+      <div class="nav">
+        <!-- 侧边栏 -->
+        <ul>
+          <li>首页</li>
+          <li>用户管理</li>
+          <li>权限管理</li>
+          <li>新闻管理</li>
+        </ul>
+      </div>
+      <!-- 主内容 -->
+      <div class="content">
+        <!-- 面包屑 -->
+        <div class="bread"></div>
+      </div>
+    </div>
+    <script>
+      class Subject {
+        constructor() {
+          this.observers = []
+        }
+        addObserver(observers) {
+          if (observers instanceof Array) {
+            this.observers.push(...observers)
+          } else {
+            this.observers.push(observers)
+          }
+        }
+        notify(data) {
+          console.log(this.observers, "observers")
+          this.observers.forEach((item) => {
+            item.update(data)
+          })
+        }
+        removeObserver(observer) {
+          this.observers = this.observers.filter((item) => item !== observer)
+        }
+      }
+
+      // 观察者
+      class Observer {
+        constructor(name) {
+          this.ele = document.querySelector(name)
+        }
+        update(data) {
+          this.ele.innerHTML = data
+        }
+      }
+      // 主要业务逻辑
+      // 给li元素绑定点击事件，点击之后触发面包屑的内容改变,导航被点击为观察目标
+      olis = document.querySelectorAll("li")
+      const subject = new Subject()
+      const observer = new Observer(".bread")
+      subject.addObserver(observer)
+      console.log(olis)
+      for (let i = 0; i < olis.length; i++) {
+        olis[i].onclick = function (e) {
+          console.log(e.target.innerHTML)
+          subject.notify(e.target.innerHTML)
+        }
+      }
+    </script>
+  </body>
+</html>
